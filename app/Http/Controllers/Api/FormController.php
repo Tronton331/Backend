@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\{Form, AllowedDomain};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Validator, Auth};
 
 class FormController extends Controller
 {
@@ -97,7 +97,44 @@ class FormController extends Controller
      */
     public function show($id)
     {
-        //
+        //  Ber relasi dengan function questions di model Form
+        $form = Form::with('questions')->find($id);
+
+        //  Bila form ada
+        if($form)
+        {
+            //  Get loggined user data
+            $userEmail = Auth::user()->email;
+            //  Cut email and remove before @ and skip one char
+            $userDomain = explode('@', $userEmail)[1];
+
+            //  Cek id form ini ada atau tidak di table allowed_domains
+            $allowedDomain = AllowedDomain::where('form_id', $id)->first();
+            if($allowedDomain)
+            {
+                //  Cek domain user ada atau tidak
+                $allowedDomain = AllowedDomain::where('form_id', $id)->pluck('domain')->toArray();
+                if(in_array($userDomain, $allowedDomain))
+                {
+                    return response()->json(["message"=>"Get form success", "form"=>$form], 200);
+                }
+                //  Klo user kagak ada
+                else
+                {
+                    return response()->json(["message"=>"Forbidden access"], 403);
+                }
+            }
+            //  Bila form id tak ada di allowed_domains
+            else
+            {
+                return response()->json(["message"=>"Get form success", "form"=>$form], 200);
+            }
+        }
+        //  Bila form tak ada
+        else
+        {
+            return response()->json(["message"=>"Form not found"], 404);
+        }
     }
 
     /**
