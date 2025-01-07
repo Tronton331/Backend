@@ -16,7 +16,9 @@ class FormController extends Controller
      */
     public function index()
     {
-        //
+        $forms = Form::get();
+
+        return response()->json(["message"=>"Get all form s success", "forms"=>$forms], 200);
     }
 
     /**
