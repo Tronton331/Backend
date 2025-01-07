@@ -51,4 +51,10 @@ class AuthController extends Controller
             return response()->json(["message"=>"Email or password incorrect"], 401);
         }
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return response()->json(["message"=>"Logout success"], 200);
+    }
 }

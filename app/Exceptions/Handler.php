@@ -38,4 +38,15 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+
+    //? Sanctum invalid token
+    //  User will get this message when sanctum token invalid
+    protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
+    {
+        if($request->expectsJson())
+        {
+            return response()->json(["message"=>"Unauthenticated."], 401);
+        }
+    }
 }
