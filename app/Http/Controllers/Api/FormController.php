@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\{Validator, Auth};
 
 class FormController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $forms = Form::get();
@@ -31,12 +26,6 @@ class FormController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //? Membahas regex
@@ -89,16 +78,11 @@ class FormController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show($slug)
     {
         //  Ber relasi dengan function questions di model Form
-        $form = Form::with('questions')->find($id);
+        //  Mencari column slug dengan value dari user
+        $form = Form::with('questions')->where('slug', $slug)->first();
 
         //  Bila form ada
         if($form)
@@ -109,11 +93,11 @@ class FormController extends Controller
             $userDomain = explode('@', $userEmail)[1];
 
             //  Cek id form ini ada atau tidak di table allowed_domains
-            $allowedDomain = AllowedDomain::where('form_id', $id)->first();
+            $allowedDomain = AllowedDomain::where('form_id', $form->id)->first();
             if($allowedDomain)
             {
                 //  Cek domain user ada atau tidak
-                $allowedDomain = AllowedDomain::where('form_id', $id)->pluck('domain')->toArray();
+                $allowedDomain = AllowedDomain::where('form_id', $form->id)->pluck('domain')->toArray();
                 if(in_array($userDomain, $allowedDomain))
                 {
                     return response()->json(["message"=>"Get form success", "form"=>$form], 200);

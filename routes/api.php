@@ -23,6 +23,6 @@ Route::group(["prefix"=>"v1"], function()
         Route::middleware("auth:sanctum")->post("logout", [AuthController::class, "logout"]);
     });
 
-    Route::middleware("auth:sanctum")->resource("forms", FormController::class);
+    Route::middleware("auth:sanctum")->resource("forms", FormController::class)->only(['index', 'store', 'show']);
 });
 
