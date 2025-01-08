@@ -139,14 +139,26 @@ class QuestionController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(Request $request, $slug, $id)
     {
-        //
+        $form = Form::where('slug', $slug)->first();
+        if(!$form)
+        {
+            return response()->json(["message"=>"Form not found"], 404);
+        }
+
+        if(!$question = Question::where('id', $id)->first())
+        {
+            return response()->json(["message"=>"Quetion not found"], 404);
+        }
+        $user = $request->user();
+        if($form->creator_id!=$user->id)
+        {
+            return response()->json(["message"=>"Forbidden access"], 403);
+        }
+        //  Klo quetion id ketemu
+        //  Klo quetion id gak ketemu
+        $question->delete();
+        return response()->json(["message"=>"Remove question success"], 200);
     }
 }
