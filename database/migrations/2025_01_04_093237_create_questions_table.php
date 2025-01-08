@@ -18,9 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger('form_id');
             $table->string('name');
             $table->enum('choice_type', ['short answer', 'paragraph', 'date', 'time', 'multiple choice', 'dropdown', 'checkboxes']);
-            $table->string('choices');
+            $table->string('choices')->nullable();
             $table->boolean('is_required');
-            
+
             $table->foreign('form_id')->references('id')->on('forms');
         });
     }
