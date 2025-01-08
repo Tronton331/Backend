@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, FormController};
+use App\Http\Controllers\Api\{AuthController, FormController, QuestionController};
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +23,9 @@ Route::group(["prefix"=>"v1"], function()
         Route::middleware("auth:sanctum")->post("logout", [AuthController::class, "logout"]);
     });
 
-    Route::middleware("auth:sanctum")->resource("forms", FormController::class)->only(['index', 'store', 'show']);
+    Route::group(["middleware"=>"auth:sanctum"], function()
+    {
+        Route::resource("forms", FormController::class)->only(['index', 'store', 'show']);
+        Route::resource("forms.questions", QuestionController::class);
+    });
 });
-
