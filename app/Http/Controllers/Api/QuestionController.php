@@ -34,7 +34,7 @@ class QuestionController extends Controller
         $validator = Validator::make($request->all(), [
             'name'=>'required',
             'choice_type'=>'required|in:"short answer", "paragraph", "date", "multiple choice", "dropdown", "checkboxes"',
-            'choices'=>'required_if:choice_type, "multiple choice", "dropdown", "checkboxes"',
+            'choices'=>'required_if:choice_type, "multiple choice", "dropdown", "checkboxes"|array',
         ]);
 
         if($validator->fails())
@@ -56,7 +56,14 @@ class QuestionController extends Controller
                 // Menambahkan form_id ke input user
                 $request->merge(["form_id"=>$form_id]);
 
-                $question = Question::create($request->all());
+                //  choices yang awalnya array jadi string
+                $input = $request->all();
+                if(isset($input["choices"]))
+                {
+                    $input["choices"] = implode(",", $input["choices"]);
+                }
+
+                $question = Question::create($input);
                 //  todo Make Condition of Create Question
                 //  LKS - 18
                 //  Kondisi ketika user tak diizinkan
