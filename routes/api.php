@@ -26,6 +26,6 @@ Route::group(["prefix"=>"v1"], function()
     Route::group(["middleware"=>"auth:sanctum"], function()
     {
         Route::resource("forms", FormController::class)->only(['index', 'store', 'show']);
-        Route::resource("forms.questions", QuestionController::class);
+        Route::resource("forms.questions", QuestionController::class)->only('index', 'destroy');
     });
 });
